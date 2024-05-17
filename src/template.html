@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess</title>
+</head>
+<body>
+    <header>
+        <p>Chess</p>
+        <nav>
+            <input type="text" id="player01" placeholder="Playername">
+            <input type="text" id="player02" placeholder="Playername or AI">
+        </nav>
+    </header>
+    <main>
+        <div class="appContainer">
+            <div class="board">
+                <div class="fieldCluster white" id="field01">
+                    <img src="<%=require('./assets/chessPieces/towerBlack.svg')%>" alt="towerBlack">
+                </div>
+                <div class="fieldCluster black" id="field02">
+                    <img src="<%=require('./assets/chessPieces/knightBlack.svg')%>" alt="knightBlack">
+                </div>
+                <div class="fieldCluster white" id="field03">
+                    <img src="<%=require('./assets/chessPieces/bishopBlack.svg')%>" alt="bishopBlack">
+                </div>
+                <div class="fieldCluster black" id="field04">
+                    <img src="<%=require('./assets/chessPieces/queenBlack.svg')%>" alt="queenBlack">
+                </div>
+                <div class="fieldCluster white" id="field05">
+                    <img src="<%=require('./assets/chessPieces/kingBlack.svg')%>" alt="kingBlack">
+                </div>
+                <div class="fieldCluster black" id="field06">
+                    <img src="<%=require('./assets/chessPieces/bishopBlack.svg')%>" alt="bishopBlack">
+                </div>
+                <div class="fieldCluster white" id="field07">
+                    <img src="<%=require('./assets/chessPieces/knightBlack.svg')%>" alt="knightBlack">
+                </div>
+                <div class="fieldCluster black" id="field08">
+                    <img src="<%=require('./assets/chessPieces/towerBlack.svg')%>" alt="towerBlack">
+                </div>
+                <div class="fieldCluster black" id="field09">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster white" id="field10">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster black" id="field11">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster white" id="field12">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster black" id="field13">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster white" id="field14">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster black" id="field15">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster white" id="field16">
+                    <img src="<%=require('./assets/chessPieces/pawnBlack.svg')%>" alt="pawnBlack">
+                </div>
+                <div class="fieldCluster white" id="field17"></div>
+                <div class="fieldCluster black" id="field18"></div>
+                <div class="fieldCluster white" id="field19"></div>
+                <div class="fieldCluster black" id="field20"></div>
+                <div class="fieldCluster white" id="field21"></div>
+                <div class="fieldCluster black" id="field22"></div>
+                <div class="fieldCluster white" id="field23"></div>
+                <div class="fieldCluster black" id="field24"></div>
+                <div class="fieldCluster black" id="field25"></div>
+                <div class="fieldCluster white" id="field26"></div>
+                <div class="fieldCluster black" id="field27"></div>
+                <div class="fieldCluster white" id="field28"></div>
+                <div class="fieldCluster black" id="field29"></div>
+                <div class="fieldCluster white" id="field30"></div>
+                <div class="fieldCluster black" id="field31"></div>
+                <div class="fieldCluster white" id="field32"></div>
+                <div class="fieldCluster white" id="field33"></div>
+                <div class="fieldCluster black" id="field34"></div>
+                <div class="fieldCluster white" id="field35"></div>
+                <div class="fieldCluster black" id="field36"></div>
+                <div class="fieldCluster white" id="field37"></div>
+                <div class="fieldCluster black" id="field38"></div>
+                <div class="fieldCluster white" id="field39"></div>
+                <div class="fieldCluster black" id="field40"></div>
+                <div class="fieldCluster black" id="field41"></div>
+                <div class="fieldCluster white" id="field42"></div>
+                <div class="fieldCluster black" id="field43"></div>
+                <div class="fieldCluster white" id="field44"></div>
+                <div class="fieldCluster black" id="field45"></div>
+                <div class="fieldCluster white" id="field46"></div>
+                <div class="fieldCluster black" id="field47"></div>
+                <div class="fieldCluster white" id="field48"></div>
+                <div class="fieldCluster white" id="field49">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster black" id="field50">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster white" id="field51">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster black" id="field52">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster white" id="field53">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster black" id="field54">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster white" id="field55">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster black" id="field56">
+                    <img src="<%=require('./assets/chessPieces/pawnWhite.svg')%>" alt="pawnWhite">
+                </div>
+                <div class="fieldCluster black" id="field57">
+                    <img src="<%=require('./assets/chessPieces/towerWhite.svg')%>" alt="towerWhite">
+                </div>
+                <div class="fieldCluster white" id="field58">
+                    <img src="<%=require('./assets/chessPieces/knightWhite.svg')%>" alt="knightWhite">
+                </div>
+                <div class="fieldCluster black" id="field59">
+                    <img src="<%=require('./assets/chessPieces/bishopWhite.svg')%>" alt="bishopWhite">
+                </div>
+                <div class="fieldCluster white" id="field60">
+                    <img src="<%=require('./assets/chessPieces/queenWhite.svg')%>" alt="queenWhite">
+                </div>
+                <div class="fieldCluster black" id="field61">
+                    <img src="<%=require('./assets/chessPieces/kingWhite.svg')%>" alt="kingWhite">
+                </div>
+                <div class="fieldCluster white" id="field62">
+                    <img src="<%=require('./assets/chessPieces/bishopWhite.svg')%>" alt="bishopWhite">
+                </div>
+                <div class="fieldCluster black" id="field63">
+                    <img src="<%=require('./assets/chessPieces/knightWhite.svg')%>" alt="knightWhite">
+                </div>
+                <div class="fieldCluster white" id="field64">
+                    <img src="<%=require('./assets/chessPieces/towerWhite.svg')%>" alt="towerWhite">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>"Chess" by DK</p>
+    </footer>
+</body>
+</html>
