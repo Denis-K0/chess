@@ -34,7 +34,7 @@ nav {
 }
 
 button{
-    width: 400px;
+    width: 100px;
     font-size: 1.2rem;
     font-weight: bold;
     border-radius: 20px;
@@ -49,11 +49,11 @@ button:hover {
 
 input {
     height: 30px;
-    width: 150px;
+    width: 100px;
     border-radius: 15px;
     border: 1px solid var(--mainColor);
     padding: 5px 20px;
-    font-size: 1rem;
+    font-size: 0.8rem;
 
 }
 
