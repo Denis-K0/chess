@@ -1,44 +1,39 @@
 "use strict";
 
-export const data = {
+export const coreData = {
     round: 0,
+    check: 0,
     player01: 'Player01',
     player02: 'AI',
     board: [],
-};
-
-export function getPlayerName() {
-    data.player01 = document.getElementById('player01').value || 'Player01';
-    data.player02 = document.getElementById('player02').value || 'AI';
-};
-
-// Update the Board Array depending on the board in the DOM
-export function updateBoard() {
-
-    const htmlBoard = document.querySelectorAll('.fieldCluster');
-    data.board = [[], [], [], [], [], [], [], []];
-    let i = 0;
-
-    htmlBoard.forEach((boardCluster) => {
-
-        // When a row is full, jump to the next
-        if (data.board[0 + i].length === 8) {
-            i++;
-        };
-
-        data.board[0 + i].push(boardCluster.children[0]?.id ?? "");
-    });
+    getPlayerName: function() {
+        coreData.player01 = document.getElementById('player01').value || 'Player01';
+        coreData.player02 = document.getElementById('player02').value || 'AI';
+    },
+    // Update the Board Array depending on the board in the DOM
+    updateBoard: function() {
+        const htmlBoard = document.querySelectorAll('.fieldCluster');
+        coreData.board = [[], [], [], [], [], [], [], []];
+        let i = 0;
     
-    console.log(data);
+        htmlBoard.forEach((boardCluster) => {
+    
+            // When a row is full, jump to the next
+            if (coreData.board[0 + i].length === 8) {
+                i++;
+            };
+    
+            coreData.board[0 + i].push(boardCluster.children[0]?.id ?? "");
+        });
 
-    countRounds();
-    // checkGameStatus():
-    // checkAiTurn();
+        coreData.countRounds();
+
+        console.log(coreData);
+
+        // checkGameStatus():
+        // checkAiTurn();
+    },
+    countRounds: function() {
+        coreData.round += 1;
+    },
 };
-
-function countRounds() {
-    data.round += 1;
-};
-
-
-
