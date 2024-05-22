@@ -2,18 +2,42 @@ import { coreData } from "../data";
 import { showPieceMovements } from "./pieces";
 "use strict";
 
-// Add Events to the board for the selecting of the pieces.
+// Handle the Events
 export const selectors = {
     htmlBoard: document.querySelectorAll('.fieldCluster'),
-    addEventsToBoard: function() {
+    addEventsToBoard() {
         selectors.htmlBoard.forEach((cluster) => {
             cluster.addEventListener('click', selectPieceFunctions.selectPiece);
         })
     },
-    removeEventsFromBoard: function() {
+    removeEventsFromBoard() {
         selectors.htmlBoard.forEach((cluster) => {
             cluster.removeEventListener('click', selectPieceFunctions.selectPiece);
+            cluster.removeEventListener('click', selectPieceFunctions.executeTurn);
+            cluster.removeEventListener('click', selectPieceFunctions.deselect);
+            cluster.classList.remove('highlighted');
         })
+    },
+    addExecuteEventsToBoard() {
+        selectors.htmlBoard.forEach((cluster) => {
+            // Control first, if the Cluster match the possible Moves
+            const clusterNumber = +cluster.id.slice(-2);
+            if(selectors.checkCluster(clusterNumber)) {
+                cluster.addEventListener('click', selectPieceFunctions.executeTurn);
+                // Add a visual Mark to the Cluster
+                cluster.classList.add('highlighted');
+            } else {
+                cluster.addEventListener('click', selectPieceFunctions.deselect);
+            };
+        });
+    },
+    checkCluster(clusterNumber) {
+        for(const move of selectingData.availableMoves) {
+            const [row, col] = move;
+            if(row * 8 + col + 1 === clusterNumber) return true;
+        };
+
+        return false;
     },
 };
 
@@ -79,6 +103,7 @@ const selectPieceFunctions = {
         const possibleMoves = showPieceMovements[pieceName](selectingData.enemyColor, selectingData.piecePosition, 
             coreData.board, selectingData.pieceColor, selectingData.pieceId, coreData.check);
         
+        // Filter the possibleMoves, if they get in conflict with a danger for the own king
         selectingData.availableMoves = selectPieceFunctions.filterInvalidMoves(possibleMoves);
         if(selectingData.availableMoves.toString() === '') return console.log('No Available Turns');
         console.log('Avaiable Moves', ...selectingData.availableMoves);
@@ -96,7 +121,7 @@ const selectPieceFunctions = {
         };
         return filteredMoves;
     },
-    // Simulated a board with the executed Move
+    // Simulate a board with the to executing Move
     simulateMove(move, pieceId, piecePosition) {
         const [targedRow, targedCol] = move;
         const [currentRow, currentCol] = piecePosition;
@@ -104,5 +129,17 @@ const selectPieceFunctions = {
         createdBoard[targedRow][targedCol] = pieceId;
         createdBoard[currentRow][currentCol] = '';
         return createdBoard;
+    },
+    displayValidMoves() {
+        selectors.removeEventsFromBoard();
+        selectors.addExecuteEventsToBoard();
+    },
+    executeTurn() {
+        selectors.removeEventsFromBoard();
+        selectors.addEventsToBoard();
+    },
+    deselect() {
+        selectors.removeEventsFromBoard();
+        selectors.addEventsToBoard();
     },
 };

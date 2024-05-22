@@ -110,6 +110,22 @@ img:hover {
     width: 75px;
 }
 
+.fieldCluster.white.highlighted {
+    background-color: #fff0c1;
+}
+
+.fieldCluster.black.highlighted {
+    background-color: #f0e0b2;
+}
+
+.fieldCluster.white.highlighted:hover {
+    background-color: var(--mainColor);
+}
+
+.fieldCluster.black.highlighted:hover {
+    background-color: var(--mainColor);
+}
+
 /* Footer */
 
 footer {
