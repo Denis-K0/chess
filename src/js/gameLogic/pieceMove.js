@@ -1,83 +1,108 @@
 import { coreData } from "../data";
-import { showPiecesMovements } from "./pieces";
+import { showPieceMovements } from "./pieces";
 "use strict";
 
 // Add Events to the board for the selecting of the pieces.
-const selectors = {
+export const selectors = {
     htmlBoard: document.querySelectorAll('.fieldCluster'),
     addEventsToBoard: function() {
         selectors.htmlBoard.forEach((cluster) => {
-            cluster.addEventListener('click', selectPiece);
+            cluster.addEventListener('click', selectPieceFunctions.selectPiece);
         })
     },
     removeEventsFromBoard: function() {
         selectors.htmlBoard.forEach((cluster) => {
-            cluster.removeEventListener('click', selectPiece);
+            cluster.removeEventListener('click', selectPieceFunctions.selectPiece);
         })
     },
 };
 
-function selectPiece(event) {
+export const selectingData = {
+    pieceId: '',
+    availableMoves: [],
+    get pieceName() {
+        return this.getPieceName(this.pieceId);
+    },
 
-    const data = {
-        cluster: event.currentTarget,
-        pieceName: getPieceName(cluster.children[0].id),
-        pieceId: cluster.children[0].id,
-        piecePosition: storedFunctions.getPiecePosition(data.pieceId),
-        pieceColor: pieceId.includes('White') ? 'White' : 'Black',
-        enemyColor: (pieceColor === 'White') ? 'White' : 'Black'
-    };
+    get piecePosition() {
+        return this.getPiecePosition(this.pieceId);
+    },
 
-    const storedFunctions = {
-        checkValidTurn: function(cluster) {
-            let pass = 0
-        
-            if(coreData.round % 2 !== 0) {
-                if(cluster.children[0]?.id.slice(-5) === 'White' ) return pass = 1
-            };
-        
-            if(coreData.round % 2 === 0) {
-                if(cluster.children[0]?.id.slice(-5) === 'Black' ) return pass = 1
-            };
-        
-            return pass;
-        },
-        getPieceName: function(piece) {
-            const zeroIndex = piece.indexOf('0');
-            return piece.slice(0, zeroIndex);
-        },
-        calculateValidMoves: function(pieceName) {
-            possibleMoves = showPiecesMovements[pieceName](data.enemyColor, data.piecePosition, 
-                coreData.board, data.pieceColor, data.pieceId, coreData.check);
-        },
-        getPiecePosition: function() {
-            for (let i = 0; i < board.length; i++) {
-                for (let j = 0; j < board[i].length; j++) {
-                    if (board[i][j] === pieceId) {
-                        return [i, j];
-                    }
+    get pieceColor() {
+        return this.pieceId.includes('White') ? 'White' : 'Black';
+    },
+
+    get enemyColor() {
+        return this.pieceColor === 'White' ? 'Black' : 'White';
+    },
+    getPieceName(pieceId) {
+        const zeroIndex = pieceId.indexOf('0');
+        return pieceId.slice(0, zeroIndex);
+    },
+    getPiecePosition(pieceId) {
+        for (let i = 0; i < coreData.board.length; i++) {
+            for (let j = 0; j < coreData.board[i].length; j++) {
+                if (coreData.board[i][j] === pieceId) {
+                    return [i, j];
                 }
-            };
+            }
+        };
 
-            throw new Error("Piece not found on the board! - F:getPiecePosition")
-        },
-    };
-
-    // First: Check if the Field is valid to be selected from the Player
-    if(storedFunctions.checkValidTurn(data.cluster) === 0) return; 
-    // Second: Calculate the possible moves & store them
-    storedFunctions.calculateValidMoves(data.pieceName);
-    // Third: Filter these moves on additional criteria
-    // filterInvalidMoves()
-
+        throw new Error("Piece not found on the board! - F:getPiecePosition")
+    },
 };
 
+const selectPieceFunctions = {
+    selectPiece(event) {
+        const cluster = event.currentTarget;
+        selectingData.pieceId = cluster.children[0]?.id ?? 'No Piece in Cluster';
+        console.log(selectingData.pieceId);
+    
+        // First: Check if the Field is valid to be selected from the Player
+        if(!selectPieceFunctions.checkValidTurn(selectingData.pieceId)) return; 
+        console.log('Valid Turn Success');
+        // Second: Calculate the possible moves & store them
+        selectPieceFunctions.calculateValidMoves(selectingData.pieceName);
+    },
+    checkValidTurn(pieceId) {
+        if(coreData.round % 2 !== 0) {
+            if(pieceId.includes('White')) return true;
+        };
+    
+        if(coreData.round % 2 === 0) {
+            if(pieceId.includes('Black')) return true;
+        };
+    
+        return false;
+    },
+    calculateValidMoves(pieceName) {
+        const possibleMoves = showPieceMovements[pieceName](selectingData.enemyColor, selectingData.piecePosition, 
+            coreData.board, selectingData.pieceColor, selectingData.pieceId, coreData.check);
+        
+        selectingData.availableMoves = selectPieceFunctions.filterInvalidMoves(possibleMoves);
+        if(selectingData.availableMoves.toString() === '') return console.log('No Available Turns');
+        console.log('Avaiable Moves', ...selectingData.availableMoves);
 
-// Check if the Field is valid to be selected from the Player
-
-
-
-
-
-
-
+        selectPieceFunctions.displayValidMoves();
+    },
+    filterInvalidMoves(possibleMoves) {
+        const filteredMoves = [];
+        // Control by each possible move, if a Check is given 
+        for(const move of possibleMoves) {
+            let newBoard = selectPieceFunctions.simulateMove(move, selectingData.pieceId, selectingData.piecePosition);
+            if(!coreData.isKingInCheck(`king01${selectingData.pieceColor}`, newBoard)) {
+            filteredMoves.push(move);
+            };
+        };
+        return filteredMoves;
+    },
+    // Simulated a board with the executed Move
+    simulateMove(move, pieceId, piecePosition) {
+        const [targedRow, targedCol] = move;
+        const [currentRow, currentCol] = piecePosition;
+        let createdBoard = JSON.parse(JSON.stringify(coreData.board));
+        createdBoard[targedRow][targedCol] = pieceId;
+        createdBoard[currentRow][currentCol] = '';
+        return createdBoard;
+    },
+};

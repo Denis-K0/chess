@@ -1,5 +1,8 @@
 "use strict";
 
+import { selectingData } from "./gameLogic/pieceMove";
+import { showPieceMovements } from "./gameLogic/pieces";
+
 export const coreData = {
     round: 0,
     check: 0,
@@ -35,5 +38,34 @@ export const coreData = {
     },
     countRounds: function() {
         coreData.round += 1;
+    },
+    // Parameter 'king' & 'board' are needed if called by filterInvalidMoves()
+    isKingInCheck(king = `king01${selectingData.enemyColor}`, board = coreData.board) {
+        const kingPosition = selectingData.getPiecePosition(king);
+        const dangerColor = king.includes('Black') ? 'Black' : 'White';   // Enemy Color
+        const pieceColor = (dangerColor === 'Black') ? 'White' : 'Black'; // Own Color
+        
+        // Detect all Enemies in the Board.
+        for (let i = 0; i < coreData.board.length; i++) {
+            for (let j = 0; j < coreData.board[i].length; j++) {
+                if (coreData.board[i][j].includes(dangerColor)) {
+                    // Collect all possible Moves of the Enemy
+                    let dangerId = coreData.board[i][j];
+                    let dangerName =  selectingData.getPieceName(dangerId);
+                    let dangerPosition = [i, j];
+
+                    const enemyMoves = showPieceMovements[dangerName](dangerColor, dangerPosition, 
+                        board, pieceColor, dangerId, coreData.check);
+
+                    // Control if one Move match to the Position of the King
+                    for (const move of enemyMoves) {
+                        if (move === kingPosition) {
+                            return true;
+                        };
+                    };
+                };
+            };
+        };
+        return false;
     },
 };

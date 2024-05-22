@@ -1,6 +1,7 @@
 import "./style/style.css";
 
 import { coreData } from "./js/data";
+import { selectors } from "./js/gameLogic/pieceMove";
 
 "use strict";
 
@@ -8,7 +9,7 @@ function startGame() {
     // resetGame();
     coreData.getPlayerName();
     coreData.updateBoard();
-    // addEventsToBoard();
+    selectors.addEventsToBoard();
 }
 
 // UI
