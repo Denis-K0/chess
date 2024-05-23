@@ -55,11 +55,11 @@ export const coreData = {
                     let dangerPosition = [i, j];
                     let kingPosition = selectingData.getPiecePosition(king, board);
 
-                    const enemyMoves = showPieceMovements[dangerName](pieceColor, dangerPosition, 
-                        board, pieceColor, dangerId, coreData.check);
+                    const { possibleMoves, rochade } = showPieceMovements[dangerName](pieceColor, dangerPosition, 
+                        board, dangerColor, dangerId, coreData.check);
 
                     // Control if one Move match to the Position of the King
-                    for (const move of enemyMoves) {
+                    for (const move of possibleMoves) {
                         if (move[0] === kingPosition[0] && move[1] === kingPosition[1]) {
                             console.log("Zug entfernt");
                             return true;

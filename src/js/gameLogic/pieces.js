@@ -1,40 +1,42 @@
 "use strict"
 
+import { coreData } from "../data";
+
+
 // Obj. that serve as a Output for each Piece
 export const showPieceMovements =  {
     pawn(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getPawnMoves(enemyColor, piecePosition, board, pieceColor));
-        return possibleMoves;
+        return { possibleMoves };
     },
     tower(enemyColor, piecePosition, board, pieceColor, pieceId, check) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getTowerMoves(enemyColor, piecePosition, board, pieceColor));
-        possibleMoves.push(...moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId, check));
-        return possibleMoves;
+        let rochade = moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId, check);
+        return { possibleMoves, rochade };
     },
     knight(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getKnightMoves(enemyColor, piecePosition, board, pieceColor));
-        return possibleMoves;
+        return { possibleMoves };
     },
     bishop(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getBishopMoves(enemyColor, piecePosition, board, pieceColor));
-        return possibleMoves;
+        return { possibleMoves };
     },
     queen(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getTowerMoves(enemyColor, piecePosition, board, pieceColor));
         possibleMoves.push(...moves.getBishopMoves(enemyColor, piecePosition, board, pieceColor));
-        return possibleMoves;
+        return { possibleMoves };
     },
     king(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getKingMoves(enemyColor, piecePosition, board, pieceColor));
-        return possibleMoves;
+        return { possibleMoves };
     },
-
 };
 
 const moves = {
@@ -140,44 +142,48 @@ const moves = {
         let movePoints = [];
     
         function checkTowerConditions() {
-            if(pieceId === 'tower01Black' && piecePosition?.toString() !== '0,0') return true;
-            if(pieceId === 'tower02Black' && piecePosition?.toString() !== '0,7') return true;
-            if(pieceId === 'tower01White' && piecePosition?.toString() !== '7,0') return true;
-            if(pieceId === 'tower02White' && piecePosition?.toString() !== '7,7') return true;
-            return true;
+            if(pieceId === 'tower01Black' && piecePosition.toString() === '0,0') return true;
+            if(pieceId === 'tower02Black' && piecePosition.toString() === '0,7') return true;
+            if(pieceId === 'tower01White' && piecePosition.toString() === '7,0') return true;
+            if(pieceId === 'tower02White' && piecePosition.toString() === '7,7') return true;
+            return false;
         };
     
         function checkKingConditions() {
             if(pieceColor === 'White' && board[7][4] === 'king01White') return true;
             if(pieceColor === 'Black' && board[0][4] === 'king01Black') return true;
-            return true;
+            return false;
         };
     
-        if (checkTowerConditions() || checkKingConditions() || check) return movePoints;
+        if (!checkTowerConditions() || !checkKingConditions() || coreData.check) return movePoints;
     
         row = (pieceColor === 'White') ? 7 : 0;
-    
+
         // Rochade to the Right
-        for(let i = col + 1; i <= 4; i++) {
-            if(board[row][i] !== '') {
-                if(board[i][row].includes('king') && board[i][row].includes(pieceColor)) {
-                    movePoints.push([row, i - 1]);
-                    break;
-                } else return;
+        if(pieceId.includes('01')) {
+            for(let i = col + 1; i <= 4; i++) {
+                if(board[row][i] !== '') {
+                    if(board[row][i].includes('king') && board[row][i].includes(pieceColor)) {
+                        console.log('Rochade accepted');
+                        return pieceId;
+                    } else break;
+                };
             };
         };
-    
+
         // Rochade to the Left
-        for(let i = col - 1; i >= 4; i++) {
-            if(board[row][i] !== '') {
-                if(board[i][row].includes('king') && board[i][row].includes(pieceColor)) {
-                    movePoints.push([row, i + 1]);
-                    break;
-                } else return;
+        if(pieceId.includes('02')) {
+            for(let i = col - 1; i >= 4; i--) {
+                if(board[row][i] !== '') {
+                    if(board[row][i].includes('king') && board[row][i].includes(pieceColor)) {
+                        console.log('Rochade accepted');
+                        return pieceId;
+                    } else break;
+                };
             };
         };
-    
-        return movePoints;
+
+        return;
     },
     
     getKnightMoves(enemyColor, piecePosition, board, pieceColor) {
