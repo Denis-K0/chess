@@ -1,11 +1,11 @@
 "use strict";
 
-import { selectingData } from "./gameLogic/pieceMove";
+import { selectingData, selectors } from "./gameLogic/pieceMove";
 import { showPieceMovements } from "./gameLogic/pieces";
 
 export const coreData = {
     round: 0,
-    check: 0,
+    check: false,
     player01: 'Player01',
     player02: 'AI',
     board: [],
@@ -34,7 +34,8 @@ export const coreData = {
         console.log(coreData);
 
         // checkGameStatus():
-        // checkAiTurn();
+        // checkAiTurn(); if no addEventsToBoard
+        selectors.addEventsToBoard();
     },
     countRounds: function() {
         coreData.round += 1;

@@ -13,8 +13,8 @@ export const selectors = {
     removeEventsFromBoard() {
         selectors.htmlBoard.forEach((cluster) => {
             cluster.removeEventListener('click', selectPieceFunctions.selectPiece);
-            cluster.removeEventListener('click', selectPieceFunctions.executeTurn);
-            cluster.removeEventListener('click', selectPieceFunctions.deselect);
+            cluster.removeEventListener('click', selectors.executeTurn);
+            cluster.removeEventListener('click', selectors.deselect);
             cluster.classList.remove('highlighted');
         })
     },
@@ -23,11 +23,11 @@ export const selectors = {
             // Control first, if the Cluster match the possible Moves
             const clusterNumber = +cluster.id.slice(-2);
             if(selectors.checkCluster(clusterNumber)) {
-                cluster.addEventListener('click', selectPieceFunctions.executeTurn);
+                cluster.addEventListener('click', selectors.executeTurn);
                 // Add a visual Mark to the Cluster
                 cluster.classList.add('highlighted');
             } else {
-                cluster.addEventListener('click', selectPieceFunctions.deselect);
+                cluster.addEventListener('click', selectors.deselect);
             };
         });
     },
@@ -38,6 +38,28 @@ export const selectors = {
         };
 
         return false;
+    },
+    displayValidMoves() {
+        selectors.removeEventsFromBoard();
+        selectors.addExecuteEventsToBoard();
+    },
+    executeTurn(event) {
+        // Get the involved Elements
+        const targetCluster = event.currentTarget;
+        const pieceElement = document.getElementById(selectingData.pieceId);
+        const sourceCluster = pieceElement.parentElement;
+
+        // Set the piece to the target position
+        sourceCluster.removeChild(pieceElement);
+        targetCluster.children[0]?.remove();
+        targetCluster.appendChild(pieceElement);
+
+        selectors.removeEventsFromBoard();
+        coreData.updateBoard();
+    },
+    deselect() {
+        selectors.removeEventsFromBoard();
+        selectors.addEventsToBoard();
     },
 };
 
@@ -71,8 +93,7 @@ export const selectingData = {
                 }
             }
         };
-
-        throw new Error("Piece not found on the board! - F:getPiecePosition")
+        throw new Error("Piece not found on the board! - F:getPiecePosition");
     },
 };
 
@@ -83,7 +104,7 @@ const selectPieceFunctions = {
         console.log(selectingData.pieceId);
     
         // First: Check if the Field is valid to be selected from the Player
-        if(!selectPieceFunctions.checkValidTurn(selectingData.pieceId)) return; 
+        if(!selectPieceFunctions.checkValidTurn(selectingData.pieceId)) return console.log('Valid Turn Success'); 
         console.log('Valid Turn Success');
         // Second: Calculate the possible moves & store them
         selectPieceFunctions.calculateValidMoves(selectingData.pieceName);
@@ -108,7 +129,7 @@ const selectPieceFunctions = {
         if(selectingData.availableMoves.toString() === '') return console.log('No Available Turns');
         console.log('Avaiable Moves', ...selectingData.availableMoves);
 
-        selectPieceFunctions.displayValidMoves();
+        selectors.displayValidMoves();
     },
     filterInvalidMoves(possibleMoves) {
         const filteredMoves = [];
@@ -129,17 +150,5 @@ const selectPieceFunctions = {
         createdBoard[targedRow][targedCol] = pieceId;
         createdBoard[currentRow][currentCol] = '';
         return createdBoard;
-    },
-    displayValidMoves() {
-        selectors.removeEventsFromBoard();
-        selectors.addExecuteEventsToBoard();
-    },
-    executeTurn() {
-        selectors.removeEventsFromBoard();
-        selectors.addEventsToBoard();
-    },
-    deselect() {
-        selectors.removeEventsFromBoard();
-        selectors.addEventsToBoard();
     },
 };

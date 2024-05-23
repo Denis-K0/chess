@@ -140,17 +140,17 @@ const moves = {
         let movePoints = [];
     
         function checkTowerConditions() {
-            if(pieceId === 'tower01Black' && piecePosition.toString() !== '0,0') return 0;
-            if(pieceId === 'tower02Black' && piecePosition.toString() !== '0,7') return 0;
-            if(pieceId === 'tower01White' && piecePosition.toString() !== '7,0') return 0;
-            if(pieceId === 'tower02White' && piecePosition.toString() !== '7,7') return 0;
-            return 1;
+            if(pieceId === 'tower01Black' && piecePosition?.toString() !== '0,0') return true;
+            if(pieceId === 'tower02Black' && piecePosition?.toString() !== '0,7') return true;
+            if(pieceId === 'tower01White' && piecePosition?.toString() !== '7,0') return true;
+            if(pieceId === 'tower02White' && piecePosition?.toString() !== '7,7') return true;
+            return true;
         };
     
         function checkKingConditions() {
-            if(pieceColor === 'White' && board[7][4] === 'king01White') return 0;
-            if(pieceColor === 'Black' && board[0][4] === 'king01Black') return 0;
-            return 1;
+            if(pieceColor === 'White' && board[7][4] === 'king01White') return true;
+            if(pieceColor === 'Black' && board[0][4] === 'king01Black') return true;
+            return true;
         };
     
         if (checkTowerConditions() || checkKingConditions() || check) return movePoints;

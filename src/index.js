@@ -1,15 +1,11 @@
-import "./style/style.css";
-
-import { coreData } from "./js/data";
-import { selectors } from "./js/gameLogic/pieceMove";
-
 "use strict";
+import "./style/style.css";
+import { coreData } from "./js/data";
 
 function startGame() {
     // resetGame();
     coreData.getPlayerName();
     coreData.updateBoard();
-    selectors.addEventsToBoard();
 }
 
 // UI
