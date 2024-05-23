@@ -42,25 +42,26 @@ export const coreData = {
     },
     // Parameter 'king' & 'board' are needed if called by filterInvalidMoves()
     isKingInCheck(king = `king01${selectingData.enemyColor}`, board = coreData.board) {
-        const kingPosition = selectingData.getPiecePosition(king);
-        const dangerColor = king.includes('Black') ? 'Black' : 'White';   // Enemy Color
+        const dangerColor = king.includes('Black') ? 'White' : 'Black';   // Enemy Color
         const pieceColor = (dangerColor === 'Black') ? 'White' : 'Black'; // Own Color
         
         // Detect all Enemies in the Board.
-        for (let i = 0; i < coreData.board.length; i++) {
-            for (let j = 0; j < coreData.board[i].length; j++) {
-                if (coreData.board[i][j].includes(dangerColor)) {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j].includes(dangerColor)) {
                     // Collect all possible Moves of the Enemy
-                    let dangerId = coreData.board[i][j];
+                    let dangerId = board[i][j];
                     let dangerName =  selectingData.getPieceName(dangerId);
                     let dangerPosition = [i, j];
+                    let kingPosition = selectingData.getPiecePosition(king, board);
 
-                    const enemyMoves = showPieceMovements[dangerName](dangerColor, dangerPosition, 
+                    const enemyMoves = showPieceMovements[dangerName](pieceColor, dangerPosition, 
                         board, pieceColor, dangerId, coreData.check);
 
                     // Control if one Move match to the Position of the King
                     for (const move of enemyMoves) {
-                        if (move === kingPosition) {
+                        if (move[0] === kingPosition[0] && move[1] === kingPosition[1]) {
+                            console.log("Zug entfernt");
                             return true;
                         };
                     };

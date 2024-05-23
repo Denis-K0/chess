@@ -71,7 +71,7 @@ export const selectingData = {
     },
 
     get piecePosition() {
-        return this.getPiecePosition(this.pieceId);
+        return this.getPiecePosition(this.pieceId, coreData.board);
     },
 
     get pieceColor() {
@@ -85,10 +85,10 @@ export const selectingData = {
         const zeroIndex = pieceId.indexOf('0');
         return pieceId.slice(0, zeroIndex);
     },
-    getPiecePosition(pieceId) {
-        for (let i = 0; i < coreData.board.length; i++) {
-            for (let j = 0; j < coreData.board[i].length; j++) {
-                if (coreData.board[i][j] === pieceId) {
+    getPiecePosition(pieceId, board) {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                if (board[i][j] === pieceId) {
                     return [i, j];
                 }
             }
@@ -138,7 +138,7 @@ const selectPieceFunctions = {
             let newBoard = selectPieceFunctions.simulateMove(move, selectingData.pieceId, selectingData.piecePosition);
             if(!coreData.isKingInCheck(`king01${selectingData.pieceColor}`, newBoard)) {
             filteredMoves.push(move);
-            };
+            } else console.log('Zug entfernt! ->' + move);
         };
         return filteredMoves;
     },
@@ -149,6 +149,7 @@ const selectPieceFunctions = {
         let createdBoard = JSON.parse(JSON.stringify(coreData.board));
         createdBoard[targedRow][targedCol] = pieceId;
         createdBoard[currentRow][currentCol] = '';
+        console.log("SimulatedBoard->", createdBoard)
         return createdBoard;
     },
 };
