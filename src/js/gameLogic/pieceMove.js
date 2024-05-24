@@ -13,7 +13,7 @@ export const selectors = {
     removeEventsFromBoard() {
         selectors.htmlBoard.forEach((cluster) => {
             cluster.removeEventListener('click', selectPieceFunctions.selectPiece);
-            cluster.removeEventListener('click', selectors.executeTurn);
+            cluster.removeEventListener('click', turnExecution.executeTurn);
             cluster.removeEventListener('click', selectors.deselect);
             cluster.classList.remove('highlighted');
         })
@@ -23,7 +23,7 @@ export const selectors = {
             // Control first, if the Cluster match the possible Moves
             const clusterNumber = +cluster.id.slice(-2);
             if(selectors.checkCluster(clusterNumber)) {
-                cluster.addEventListener('click', selectors.executeTurn);
+                cluster.addEventListener('click', turnExecution.executeTurn);
                 // Add a visual Mark to the Cluster
                 cluster.classList.add('highlighted');
             } else {
@@ -34,7 +34,10 @@ export const selectors = {
     checkCluster(clusterNumber) {
         for(const move of selectingData.availableMoves) {
             const [row, col] = move;
-            if(row * 8 + col + 1 === clusterNumber) return true;
+            const field = row * 8 + col + 1;
+            if(field === clusterNumber) {
+                return true;
+            }
         };
 
         return false;
@@ -43,6 +46,15 @@ export const selectors = {
         selectors.removeEventsFromBoard();
         selectors.addExecuteEventsToBoard();
     },
+    deselect() {
+        selectors.removeEventsFromBoard();
+        selectors.addEventsToBoard();
+    },
+};
+
+const turnExecution = {
+    queenBlack: document.getElementById('queen01Black').cloneNode(true),
+    queenWhite: document.getElementById('queen01White').cloneNode(true),
     executeTurn(event) {
         // Get the involved Elements
         const targetCluster = event.currentTarget;
@@ -50,21 +62,25 @@ export const selectors = {
         const sourceCluster = pieceElement.parentElement;
 
         // Set the piece to the target position
-        sourceCluster.removeChild(pieceElement);
-        targetCluster.children[0]?.remove();
-        targetCluster.appendChild(pieceElement);
+        turnExecution.executeNormalTurn(targetCluster, pieceElement, sourceCluster);
 
-        //if the Turn contains a rochade
-        selectors.secondRochadeExecuteTurn(targetCluster);
+        // If the Turn contains a promotion
+        turnExecution.executePromotion(targetCluster, pieceElement);
 
+        // If the Turn contains a rochade
+        turnExecution.executeRochadeTurn(targetCluster);
+
+        // Set the board back & update it
         selectors.removeEventsFromBoard();
         coreData.updateBoard();
     },
-    deselect() {
-        selectors.removeEventsFromBoard();
-        selectors.addEventsToBoard();
+
+    executeNormalTurn(targetCluster, pieceElement, sourceCluster) {
+        sourceCluster.removeChild(pieceElement);
+        targetCluster.children[0]?.remove();
+        targetCluster.appendChild(pieceElement);
     },
-    secondRochadeExecuteTurn(targetCluster) {
+    executeRochadeTurn(targetCluster) {
         if(!selectingData.rochade) return;
         switch (targetCluster.id) {
             case "field04":
@@ -89,6 +105,27 @@ export const selectors = {
                 return;
             default:
                 return;
+        };
+    },
+    executePromotion(targetCluster, pieceElement) {
+        if(!pieceElement.id.includes('pawn')) return;
+
+        if(targetCluster.id.includes('01') || targetCluster.id.includes('02') ||
+        targetCluster.id.includes('03') || targetCluster.id.includes('04') ||
+        targetCluster.id.includes('05') || targetCluster.id.includes('06') ||
+        targetCluster.id.includes('07') || targetCluster.id.includes('08')) {
+            pieceElement.remove();
+            turnExecution.queenWhite.id = 'queen02White';
+            targetCluster.appendChild(turnExecution.queenWhite);
+        };
+
+        if(targetCluster.id.includes('64') || targetCluster.id.includes('63') ||
+        targetCluster.id.includes('62') || targetCluster.id.includes('61') ||
+        targetCluster.id.includes('60') || targetCluster.id.includes('59') ||
+        targetCluster.id.includes('58') || targetCluster.id.includes('57')) {
+            pieceElement.remove();
+            turnExecution.queenBlack.id = 'queen02Black';
+            targetCluster.appendChild(turnExecution.queenBlack);
         };
     },
 };
