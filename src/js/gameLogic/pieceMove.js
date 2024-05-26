@@ -4,7 +4,9 @@ import { showPieceMovements } from "./pieces";
 
 // Handle the Events
 export const selectors = {
-    htmlBoard: document.querySelectorAll('.fieldCluster'),
+    get htmlBoard() {
+        return document.querySelectorAll('.fieldCluster');
+    },
     addEventsToBoard() {
         selectors.htmlBoard.forEach((cluster) => {
             cluster.addEventListener('click', selectPieceFunctions.selectPiece);
@@ -123,11 +125,13 @@ export const selectPieceFunctions = {
         // Filter the possibleMoves, if they get in conflict with a danger for the own king
         selectingData.availableMoves = selectPieceFunctions.filterInvalidMoves(possibleMoves);
 
-        if (selectingData.availableMoves.length > 0) {
-            return true;
+        if (selectingData.availableMoves.length === 0) {
+            return false;
         }
 
-        return false;
+        console.log('Possible Moves: ', selectingData.availableMoves);
+
+        return true;
     },
     filterInvalidMoves(possibleMoves) {
         const filteredMoves = [];

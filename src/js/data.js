@@ -38,7 +38,7 @@ export const coreData = {
 
         console.log(coreData);
 
-        if(gameStatus.checkGameStatus()) return;
+        gameStatus.checkGameStatus();
         // checkAiTurn(); if no addEventsToBoard
         selectors.addEventsToBoard();
     },
@@ -48,19 +48,19 @@ export const coreData = {
 };
 
 export const gameStatus = {
+    originalHtmlBoard: document.getElementById('board').cloneNode(true),
     checkGameStatus() {
         const playerKing = (coreData.round % 2 === 0) ? 'king01Black' : 'king01White';
-        const player = (coreData.round % 2 === 0) ? coreData.player02 : coreData.player01;
+        const player = (coreData.round % 2 === 0) ? coreData.Black.player02 : coreData.White.player01;
         const playerColor = (coreData.round % 2 === 0) ? 'Black' : 'White';
         const enemyColor = (coreData.round % 2 === 0) ? 'White' : 'Black';
         if(this.isKingInCheck(playerKing, coreData.board)) {
             coreData[playerColor].check = true;
             coreData[enemyColor].check = false;
 
-            if(this.checkMate(playerColor)) return console.log("Schach Matt!");
+            if(this.checkMate(playerColor)) return this.runGameOver();
 
             alert(player + " is in Check!");
-            return false;
         };
     },
     // Arguments 'king' & 'board' are always necessary
@@ -109,17 +109,36 @@ export const gameStatus = {
     },
     checkMate(playerColor) {
         // Detect all own pieces
-        for (let i = 0; i < board.length; i++) {
-            for (let j = 0; j < board[i].length; j++) {
-                if (board[i][j].includes(playerColor)) {
+        for (let i = 0; i < coreData.board.length; i++) {
+            for (let j = 0; j < coreData.board[i].length; j++) {
+                if (coreData.board[i][j].includes(playerColor)) {
                     // Check if they have a available Move
-                    selectingData.pieceId = board[i][j]
-                    if(selectPieceFunctions.calculateValidMoves.bind(selectingData.pieceName)) {
+                    selectingData.pieceId = coreData.board[i][j];
+                    if(selectPieceFunctions.calculateValidMoves(selectingData.pieceName)) {
                         return false;
                     };
                 };
             };
         };  
         return true;
+    },
+    runGameOver() {
+        const winner = (coreData.round % 2 === 0) ? 
+        coreData.White.player01 : coreData.Black.player02;
+
+        alert(winner + ' won the game!');
+
+        this.resetGame();
+    },
+    resetGame() {
+        coreData.round = 0;
+        // Reset the Board
+        document.getElementById('board').remove();
+
+        const newBoard = gameStatus.originalHtmlBoard.cloneNode(true); 
+        newBoard.id = 'board'; 
+        document.getElementById('appContainer').appendChild(newBoard);
+
+        coreData.updateBoard();
     },
 };

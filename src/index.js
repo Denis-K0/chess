@@ -1,12 +1,11 @@
 "use strict";
 import "./style/style.css";
-import { coreData } from "./js/data";
+import { coreData, gameStatus } from "./js/data";
 
 function startGame() {
-    // resetGame();
     coreData.getPlayerName();
-    coreData.updateBoard();
-}
+    gameStatus.resetGame();
+};
 
 // UI
 function changePlayer() {
