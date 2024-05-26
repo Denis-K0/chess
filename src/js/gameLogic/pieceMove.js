@@ -84,17 +84,23 @@ export const selectingData = {
     },
 };
 
-const selectPieceFunctions = {
+export const selectPieceFunctions = {
     selectPiece(event) {
         const cluster = event.currentTarget;
         selectingData.pieceId = cluster.children[0]?.id ?? 'No Piece in Cluster';
         console.log(selectingData.pieceId);
         
         // First: Check if the Field is valid to be selected from the Player
-        if(!selectPieceFunctions.checkValidTurn(selectingData.pieceId)) return console.log('Valid Turn Success'); 
+        if(!selectPieceFunctions.checkValidTurn(selectingData.pieceId)) return console.log('Not your Turn'); 
         console.log('Valid Turn Success');
+
         // Second: Calculate the possible moves & store them
-        selectPieceFunctions.calculateValidMoves(selectingData.pieceName);
+        if(!selectPieceFunctions.calculateValidMoves(selectingData.pieceName)) return console.log('No Available Turns');
+
+        console.log('Avaiable Moves', ...selectingData.availableMoves);
+
+        // Third: Show the User the available Moves
+        selectors.displayValidMoves();
     },
     checkValidTurn(pieceId) {
         if(coreData.round % 2 !== 0) {
@@ -109,20 +115,19 @@ const selectPieceFunctions = {
     },
     calculateValidMoves(pieceName) {
         const { possibleMoves, rochade } = showPieceMovements[pieceName](selectingData.enemyColor, selectingData.piecePosition, 
-            coreData.board, selectingData.pieceColor, selectingData.pieceId, coreData.check);
-            
-        console.log('Rochade => ' + rochade);
+            coreData.board, selectingData.pieceColor, selectingData.pieceId);
         
         //Store the rochade value, for the validation & placement
         selectingData.rochade = rochade;
         
         // Filter the possibleMoves, if they get in conflict with a danger for the own king
         selectingData.availableMoves = selectPieceFunctions.filterInvalidMoves(possibleMoves);
-        
-        if(selectingData.availableMoves.toString() === '') return console.log('No Available Turns');
-        console.log('Avaiable Moves', ...selectingData.availableMoves);
-        
-        selectors.displayValidMoves();
+
+        if (selectingData.availableMoves.length > 0) {
+            return true;
+        }
+
+        return false;
     },
     filterInvalidMoves(possibleMoves) {
         const filteredMoves = [];

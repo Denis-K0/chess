@@ -13,7 +13,7 @@ export const showPieceMovements =  {
     tower(enemyColor, piecePosition, board, pieceColor, pieceId, check) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getTowerMoves(enemyColor, piecePosition, board, pieceColor));
-        let rochade = moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId, check);
+        let rochade = moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId);
         return { possibleMoves, rochade };
     },
     knight(enemyColor, piecePosition, board, pieceColor) {
@@ -86,7 +86,7 @@ const moves = {
         return movePoints;
     },
 
-    getTowerMoves(enemyColor, piecePosition, board, pieceColor) {
+    getTowerMoves(enemyColor, piecePosition, board) {
         const [row, col] = piecePosition;
         let movePoints = [];
     
@@ -137,7 +137,7 @@ const moves = {
         return movePoints;
     },
     
-    getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId, check) {
+    getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId) {
         let [row, col] = piecePosition;
         let movePoints = [];
     
@@ -155,7 +155,7 @@ const moves = {
             return false;
         };
     
-        if (!checkTowerConditions() || !checkKingConditions() || coreData.check) return movePoints;
+        if (!checkTowerConditions() || !checkKingConditions() || coreData[pieceColor].check) return movePoints;
     
         row = (pieceColor === 'White') ? 7 : 0;
 
@@ -186,7 +186,7 @@ const moves = {
         return;
     },
     
-    getKnightMoves(enemyColor, piecePosition, board, pieceColor) {
+    getKnightMoves(enemyColor, piecePosition, board) {
         const [row, col] = piecePosition;
         let movePoints = [];
     
@@ -209,7 +209,7 @@ const moves = {
         return movePoints;
     },
     
-    getBishopMoves(enemyColor, piecePosition, board, pieceColor) {
+    getBishopMoves(enemyColor, piecePosition, board) {
         const [row, col] = piecePosition;
         let movePoints = [];
     
@@ -260,7 +260,7 @@ const moves = {
         return movePoints;
     },
     
-    getKingMoves(enemyColor, piecePosition, board, pieceColor) {
+    getKingMoves(enemyColor, piecePosition, board,) {
         const [row, col] = piecePosition;
         let movePoints = [];
         const directions = [[1, 0], [1, 1], [0, 1],
