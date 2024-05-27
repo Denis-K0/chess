@@ -116,11 +116,8 @@ export const selectPieceFunctions = {
         return false;
     },
     calculateValidMoves(pieceName) {
-        const { possibleMoves, rochade } = showPieceMovements[pieceName](selectingData.enemyColor, selectingData.piecePosition, 
+        const { possibleMoves } = showPieceMovements[pieceName](selectingData.enemyColor, selectingData.piecePosition, 
             coreData.board, selectingData.pieceColor, selectingData.pieceId);
-        
-        //Store the rochade value, for the validation & placement
-        selectingData.rochade = rochade;
         
         // Filter the possibleMoves, if they get in conflict with a danger for the own king
         selectingData.availableMoves = selectPieceFunctions.filterInvalidMoves(possibleMoves);
@@ -135,27 +132,35 @@ export const selectPieceFunctions = {
     },
     filterInvalidMoves(possibleMoves) {
         const filteredMoves = [];
+
         // Control by each possible move, if a Check is given 
         for(const move of possibleMoves) {
-            let newBoard = selectPieceFunctions.simulateMove(move, selectingData.pieceId, selectingData.piecePosition);
+            let newBoard = selectPieceFunctions.simulateMove
+            (move, selectingData.pieceId, selectingData.piecePosition, selectingData.pieceColor);
+
             if(!gameStatus.isKingInCheck(`king01${selectingData.pieceColor}`, newBoard)) {
                 filteredMoves.push(move);
             } else console.log('Zug entfernt! ->' + move);
         };
+
         return filteredMoves;
     },
     // Simulate a board with the to executing Move
-    simulateMove(move, pieceId, piecePosition) {
+    simulateMove(move, pieceId, piecePosition, pieceColor) {
         const [targedRow, targedCol] = move;
         const [currentRow, currentCol] = piecePosition;
         let createdBoard = JSON.parse(JSON.stringify(coreData.board));
+
+        // If Rochade ist true, then apply it correctly
+        if(createdBoard[targedRow][targedCol].includes('king01' + pieceColor)) {
+           createdBoard = selectPieceFunctions.correctBoardForRochade(createdBoard, pieceId);
+           createdBoard[currentRow][currentCol] = '';
+           console.log("SimulatedBoard->", createdBoard)
+           return createdBoard;
+        };
+
         createdBoard[targedRow][targedCol] = pieceId;
         createdBoard[currentRow][currentCol] = '';
-        
-        // If Rochade ist true, then apply it correctly
-        if(selectingData.rochade && (targedCol === 3 || targedCol === 5)) {
-            createdBoard = selectPieceFunctions.correctBoardForRochade(createdBoard, selectingData.rochade);
-        };
 
         console.log("SimulatedBoard->", createdBoard)
         return createdBoard;
@@ -166,21 +171,25 @@ export const selectPieceFunctions = {
             case "tower01Black":
                 createdBoard[0][2] = 'king01Black';
                 createdBoard[0][4] = '';
+                createdBoard[0][3] = towerId;
                 return createdBoard;
             case "tower02Black":
                 createdBoard[0][6] = 'king01Black';
                 createdBoard[0][4] = '';
+                createdBoard[0][5] = towerId;
                 return createdBoard;
-                case "tower01White":
-                    createdBoard[7][2] = 'king01White';
+            case "tower01White":
+                createdBoard[7][2] = 'king01White';
                 createdBoard[7][4] = '';
+                createdBoard[7][3] = towerId;
                 return createdBoard;
             case "tower02White":
                 createdBoard[7][6] = 'king01White';
                 createdBoard[7][4] = '';
+                createdBoard[7][5] = towerId;
                 return createdBoard;
-                default:
-                    return console.log("Invalid towerId");
+            default:
+                return console.log("Invalid towerId");
         };
     },
 };
@@ -194,14 +203,15 @@ const turnExecution = {
         const pieceElement = document.getElementById(selectingData.pieceId);
         const sourceCluster = pieceElement.parentElement;
 
-        // Set the piece to the target position
-        turnExecution.executeNormalTurn(targetCluster, pieceElement, sourceCluster);
+        // If the Turn contains not a rochade
+        if(!turnExecution.executeRochadeTurn(targetCluster, pieceElement, sourceCluster)) {
+
+            // Set the piece to the target position
+            turnExecution.executeNormalTurn(targetCluster, pieceElement, sourceCluster);
+        };
 
         // If the Turn contains a promotion
         turnExecution.executePromotion(targetCluster, pieceElement);
-
-        // If the Turn contains a rochade
-        turnExecution.executeRochadeTurn(targetCluster);
 
         // Set the board back & update it
         selectors.removeEventsFromBoard();
@@ -213,31 +223,40 @@ const turnExecution = {
         targetCluster.children[0]?.remove();
         targetCluster.appendChild(pieceElement);
     },
-    executeRochadeTurn(targetCluster) {
-        if(!selectingData.rochade) return;
-        switch (targetCluster.id) {
-            case "field04":
+    executeRochadeTurn(targetCluster, pieceElement, sourceCluster) {
+        if(!targetCluster.children[0]?.id.includes('king01' + selectingData.pieceColor)) return false;
+
+        switch (pieceElement.id) {
+            case "tower01Black":
                 const kingElement01 = document.getElementById('king01Black');
                 kingElement01.remove();
                 document.getElementById('field03').appendChild(kingElement01);
-                return;
-            case "field06":
+                sourceCluster.removeChild(pieceElement);
+                document.getElementById('field04').appendChild(pieceElement);
+                return true;
+            case "tower02Black":
                 const kingElement02 = document.getElementById('king01Black');
                 kingElement02.remove();
                 document.getElementById('field07').appendChild(kingElement02);
-                return;
-            case "field60":
+                sourceCluster.removeChild(pieceElement);
+                document.getElementById('field06').appendChild(pieceElement);
+                return true;
+            case "tower01White":
                 const kingElement03 = document.getElementById('king01White');
                 kingElement03.remove();
                 document.getElementById('field59').appendChild(kingElement03);
-                return;
-            case "field62":
+                sourceCluster.removeChild(pieceElement);
+                document.getElementById('field60').appendChild(pieceElement);
+                return true;
+            case "tower02White":
                 const kingElement04 = document.getElementById('king01White');
                 kingElement04.remove();
                 document.getElementById('field63').appendChild(kingElement04);
-                return;
+                sourceCluster.removeChild(pieceElement);
+                document.getElementById('field62').appendChild(pieceElement);
+                return true;
             default:
-                return;
+                return false;
         };
     },
     executePromotion(targetCluster, pieceElement) {

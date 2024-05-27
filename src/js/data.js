@@ -6,11 +6,11 @@ import { showPieceMovements } from "./gameLogic/pieces";
 export const coreData = {
     round: 0,
     White: {
-        check: 'false',
+        check: false,
         player01: 'Player01',
     },
     Black: {
-        check: 'false',
+        check: false,
         player02: 'AI',
     },
     board: [],
@@ -56,12 +56,14 @@ export const gameStatus = {
         const enemyColor = (coreData.round % 2 === 0) ? 'White' : 'Black';
         if(this.isKingInCheck(playerKing, coreData.board)) {
             coreData[playerColor].check = true;
-            coreData[enemyColor].check = false;
 
             if(this.checkMate(playerColor)) return this.runGameOver();
 
             alert(player + " is in Check!");
-        };
+        } else {
+            coreData[enemyColor].check = false;
+            coreData[playerColor].check = false;
+        }
     },
     // Arguments 'king' & 'board' are always necessary
     isKingInCheck(king, board) {
@@ -91,7 +93,7 @@ export const gameStatus = {
         let dangerPosition = [i, j];
         let kingPosition = selectingData.getPiecePosition(king, board);
 
-        const { possibleMoves, rochade } = showPieceMovements[dangerName]
+        const { possibleMoves } = showPieceMovements[dangerName]
         (pieceColor, dangerPosition, board, dangerColor, dangerId);
         
         if(this.controlMoveMatch(possibleMoves, kingPosition)) return true;

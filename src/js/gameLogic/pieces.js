@@ -13,8 +13,8 @@ export const showPieceMovements =  {
     tower(enemyColor, piecePosition, board, pieceColor, pieceId, check) {
         let possibleMoves = [];
         possibleMoves.push(...moves.getTowerMoves(enemyColor, piecePosition, board, pieceColor));
-        let rochade = moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId);
-        return { possibleMoves, rochade };
+        possibleMoves.push(...moves.getRochadMoves(enemyColor, piecePosition, board, pieceColor, pieceId));
+        return { possibleMoves };
     },
     knight(enemyColor, piecePosition, board, pieceColor) {
         let possibleMoves = [];
@@ -165,7 +165,7 @@ const moves = {
                 if(board[row][i] !== '') {
                     if(board[row][i].includes('king') && board[row][i].includes(pieceColor)) {
                         console.log('Rochade accepted');
-                        return pieceId;
+                        movePoints.push([row, i]);
                     } else break;
                 };
             };
@@ -177,13 +177,13 @@ const moves = {
                 if(board[row][i] !== '') {
                     if(board[row][i].includes('king') && board[row][i].includes(pieceColor)) {
                         console.log('Rochade accepted');
-                        return pieceId;
+                        movePoints.push([row, i]);
                     } else break;
                 };
             };
         };
 
-        return;
+        return movePoints;
     },
     
     getKnightMoves(enemyColor, piecePosition, board) {
