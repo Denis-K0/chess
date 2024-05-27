@@ -57,7 +57,6 @@ export const selectors = {
 export const selectingData = {
     pieceId: '',
     availableMoves: [],
-    rochade: false,
     get pieceName() {
         return this.getPieceName(this.pieceId);
     },
@@ -194,12 +193,17 @@ export const selectPieceFunctions = {
     },
 };
                     
-const turnExecution = {
+export const turnExecution = {
     queenBlack: document.getElementById('queen01Black').cloneNode(true),
     queenWhite: document.getElementById('queen01White').cloneNode(true),
-    executeTurn(event) {
+    executeTurn(event, target) {
         // Get the involved Elements
-        const targetCluster = event.currentTarget;
+        let targetCluster = 0;
+        if(event === 'ai') {
+            targetCluster = document.getElementById(target)
+        } else {
+            targetCluster = event.currentTarget;
+        };
         const pieceElement = document.getElementById(selectingData.pieceId);
         const sourceCluster = pieceElement.parentElement;
 
@@ -224,6 +228,8 @@ const turnExecution = {
         targetCluster.appendChild(pieceElement);
     },
     executeRochadeTurn(targetCluster, pieceElement, sourceCluster) {
+        console.log(selectingData.pieceColor);
+        console.log(targetCluster.children[0]?.id);
         if(!targetCluster.children[0]?.id.includes('king01' + selectingData.pieceColor)) return false;
 
         switch (pieceElement.id) {

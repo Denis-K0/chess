@@ -1,7 +1,8 @@
 "use strict";
 
-import { selectingData, selectors, selectPieceFunctions} from "./gameLogic/pieceMove";
+import { selectingData, selectPieceFunctions, selectors} from "./gameLogic/pieceMove";
 import { showPieceMovements } from "./gameLogic/pieces";
+import { aiTurn } from "./ai";
 
 export const coreData = {
     round: 0,
@@ -23,7 +24,8 @@ export const coreData = {
         const htmlBoard = document.querySelectorAll('.fieldCluster');
         this.board = [[], [], [], [], [], [], [], []];
         let i = 0;
-    
+        
+        // The Board Update
         htmlBoard.forEach((boardCluster) => {
     
             // When a row is full, jump to the next
@@ -38,12 +40,18 @@ export const coreData = {
 
         console.log(coreData);
 
-        gameStatus.checkGameStatus();
-        // checkAiTurn(); if no addEventsToBoard
+        if(gameStatus.checkGameStatus()) return gameStatus.runGameOver();
+
+        if(this.checkAiTurn()) return aiTurn.executeAiTurn();
+
         selectors.addEventsToBoard();
     },
     countRounds() {
         this.round += 1;
+    },
+    checkAiTurn() {
+        if ((this.Black.player02 === 'AI') && (this.round % 2 === 0)) return true;
+        return false;
     },
 };
 
@@ -54,16 +62,19 @@ export const gameStatus = {
         const player = (coreData.round % 2 === 0) ? coreData.Black.player02 : coreData.White.player01;
         const playerColor = (coreData.round % 2 === 0) ? 'Black' : 'White';
         const enemyColor = (coreData.round % 2 === 0) ? 'White' : 'Black';
+        
         if(this.isKingInCheck(playerKing, coreData.board)) {
             coreData[playerColor].check = true;
-
-            if(this.checkMate(playerColor)) return this.runGameOver();
 
             alert(player + " is in Check!");
         } else {
             coreData[enemyColor].check = false;
             coreData[playerColor].check = false;
-        }
+        };
+        
+        if(this.checkMate(playerColor)) return true;
+
+        return false;
     },
     // Arguments 'king' & 'board' are always necessary
     isKingInCheck(king, board) {
