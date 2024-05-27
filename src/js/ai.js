@@ -1,7 +1,7 @@
 'use strict'
 
 import { selectPieceFunctions, selectingData, turnExecution } from "./gameLogic/pieceMove";
-import { coreData } from "./data";
+import { coreData } from "./gameStatus";
 
 export const aiTurn = {
     playerColor: 'Black',

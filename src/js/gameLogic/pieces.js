@@ -1,6 +1,6 @@
 "use strict"
 
-import { coreData } from "../data";
+import { coreData } from "../gameStatus";
 
 
 // Obj. that serve as a Output for each Piece
