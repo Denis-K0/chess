@@ -1,4 +1,4 @@
-import { coreData, gameStatus } from "../data";
+import { coreData, gameStatus } from "../gameStatus";
 import { showPieceMovements } from "./pieces";
 "use strict";
 
